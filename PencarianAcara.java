@@ -1,32 +1,36 @@
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
+import java.time.LocalDate; // Menggunakan kelas untuk menyimpan dan mengelola tanggal
+import java.time.format.DateTimeFormatter; // Memformat tanggal menjadi bentuk yang lebih mudah dibaca
+import java.util.Scanner; // Menggunakan Scanner untuk membaca input pengguna
 
-class Acara {
-    LocalDate tanggal;
-    String nama;
-    String lokasi;
-    String deskripsi;
+// Kelas untuk menyimpan informasi acara
+class Acara { 
+    LocalDate tanggal; // Menyimpan tanggal acara
+    String nama; // Nama acara
+    String lokasi; // Lokasi acara
+    String deskripsi; // Penjelasan tentang acara
 
-    public Acara(LocalDate tanggal, String nama, String lokasi, String deskripsi) {
-        this.tanggal = tanggal;
-        this.nama = nama;
-        this.lokasi = lokasi;
-        this.deskripsi = deskripsi;
+    // Constructor untuk membuat objek Acara dengan data yang diberikan
+    public Acara(LocalDate tanggal, String nama, String lokasi, String deskripsi) { 
+        this.tanggal = tanggal; 
+        this.nama = nama; 
+        this.lokasi = lokasi; 
+        this.deskripsi = deskripsi; 
     }
 
+    // Metode untuk menampilkan informasi acara dengan format yang lebih rapi
     @Override
-    public String toString() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy");
+    public String toString() { 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy"); // Format tanggal menjadi "10 Mei 2025"
         return String.format("Tanggal: %s\nNama Acara: %s\nLokasi: %s\nDeskripsi: %s",
-                            tanggal.format(formatter), nama, lokasi, deskripsi);
+                            tanggal.format(formatter), nama, lokasi, deskripsi); 
     }
 }
 
-public class PencarianAcara {
-    public static void main(String[] args) {
-        // Data acara yang sudah diurutkan berdasarkan tanggal
-        Acara[] jadwalAcara = {
+// Kelas utama untuk sistem pencarian acara
+public class PencarianAcara { 
+    public static void main(String[] args) { 
+        // Membuat daftar acara yang sudah diurutkan berdasarkan tanggal
+        Acara[] jadwalAcara = { 
             new Acara(LocalDate.of(2025, 5, 10), "Workshop Java", "Ruang Pelatihan A", "Workshop dasar pemrograman Java"),
             new Acara(LocalDate.of(2025, 5, 15), "Seminar AI", "Aula Utama", "Seminar tentang perkembangan Artificial Intelligence"),
             new Acara(LocalDate.of(2025, 5, 20), "Kompetisi Coding", "Lab Komputer", "Kompetisi coding untuk mahasiswa"),
@@ -38,57 +42,58 @@ public class PencarianAcara {
             new Acara(LocalDate.of(2025, 6, 20), "Game Development Talk", "Ruang Multimedia", "Diskusi tentang pengembangan game")
         };
 
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in); // Membuat Scanner untuk membaca input pengguna
 
+        // Tampilan awal program
         System.out.println("=== SISTEM PENCARIAN ACARA ===");
         System.out.println("Format tanggal: yyyy-MM-dd (contoh: 2025-05-20)");
-        System.out.print("Masukkan tanggal yang ingin dicari: ");
-        String tanggalInput = scanner.nextLine();
+        System.out.print("Masukkan tanggal yang ingin dicari: "); // Meminta pengguna memasukkan tanggal
+        String tanggalInput = scanner.nextLine(); // Membaca input tanggal dari pengguna
 
-        try {
-            // Parse input tanggal
-            LocalDate tanggalCari = LocalDate.parse(tanggalInput);
+        try { 
+            // Konversi input ke format LocalDate
+            LocalDate tanggalCari = LocalDate.parse(tanggalInput); 
 
-            // Lakukan pencarian binary search
-            int index = cariAcaraByTanggal(jadwalAcara, tanggalCari);
+            // Menjalankan pencarian acara dengan binary search
+            int index = cariAcaraByTanggal(jadwalAcara, tanggalCari); 
 
             System.out.println("\nHASIL PENCARIAN:");
-            if (index != -1) {
+            if (index != -1) { 
                 System.out.println("Acara ditemukan pada tanggal " + tanggalInput + "!");
-                System.out.println(jadwalAcara[index]);
-            } else {
+                System.out.println(jadwalAcara[index]); // Menampilkan informasi acara
+            } else { 
                 System.out.println("Tidak ada acara yang terjadwal pada tanggal " + tanggalInput + ".");
             }
-        } catch (Exception e) {
-            System.out.println("Format tanggal tidak valid. Gunakan format yyyy-MM-dd.");
+        } catch (Exception e) { 
+            System.out.println("Format tanggal tidak valid. Gunakan format yyyy-MM-dd."); 
         }
 
-        scanner.close();
+        scanner.close(); // Menutup Scanner agar tidak boros memori
     }
 
-    public static int cariAcaraByTanggal(Acara[] jadwalAcara, LocalDate tanggal) {
-        int low = 0;
-        int high = jadwalAcara.length - 1;
+    // Metode pencarian acara berdasarkan tanggal menggunakan binary search
+    public static int cariAcaraByTanggal(Acara[] jadwalAcara, LocalDate tanggal) { 
+        int low = 0; // Batas bawah pencarian
+        int high = jadwalAcara.length - 1; // Batas atas pencarian
 
-        while (low <= high) {
-            int mid = low + (high - low) / 2;
+        while (low <= high) { // Selama masih ada data yang bisa diperiksa
+            int mid = low + (high - low) / 2; // Menentukan titik tengah dari daftar acara
 
-            // Bandingkan tanggal
-            if (jadwalAcara[mid].tanggal.isEqual(tanggal)) {
-                return mid;
+            // Jika tanggal acara sama dengan tanggal yang dicari, kembalikan indeksnya
+            if (jadwalAcara[mid].tanggal.isEqual(tanggal)) { 
+                return mid; 
             }
 
-            // Jika tanggal yang dicari lebih awal, cari di setengah kiri
-            if (jadwalAcara[mid].tanggal.isAfter(tanggal)) {
-                high = mid - 1;
+            // Jika tanggal yang dicari lebih awal, cari di bagian kiri
+            if (jadwalAcara[mid].tanggal.isAfter(tanggal)) { 
+                high = mid - 1; 
             }
-            // Jika tanggal yang dicari lebih akhir, cari di setengah kanan
-            else {
-                low = mid + 1;
+            // Jika tanggal yang dicari lebih akhir, cari di bagian kanan
+            else { 
+                low = mid + 1; 
             }
         }
 
-        // Jika acara tidak ditemukan
-        return -1;
+        return -1; // Jika tidak ditemukan, kembalikan -1
     }
 }
